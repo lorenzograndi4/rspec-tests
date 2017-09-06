@@ -21,6 +21,17 @@ it becomes clear to _that particular person_ why the code failed.
   it will start moving. How do we ensure our parsing logic is correct
   without having the website give us the exact same latitude and longitude values every time we run our tests?
 
+
+
+
+
+
+
+
+
+
+
+
 ::learnings::
 
 1. There is a lot I need to learn about testing!
