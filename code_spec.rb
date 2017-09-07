@@ -42,6 +42,12 @@ RSpec.describe "When importing lat and lng" do
     expect(lng).to be_between(-180, 180)
   end
 
+  it "returns error if lat / lng are not numbers" do
+    find_position = find_lat_lng(['foo', 'bar'])
+    puts find_position
+    expect(find_position).to eq(@error)
+  end
+
   it "shouldn't be too far from the previous position" do
     prev_lat, prev_lng = find_lat_lng
     sleep 10
@@ -51,9 +57,7 @@ RSpec.describe "When importing lat and lng" do
   end
 
   it "checks lat and lng for random values" do
-    10.times {
-      expect(random_lat).to be_between(-90, 90)
-      expect(random_lng).to be_between(-180, 180)
-    }
+    expect(random_lat).to be_between(-90, 90)
+    expect(random_lng).to be_between(-180, 180)
   end
 end
