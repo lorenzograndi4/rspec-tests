@@ -2,6 +2,10 @@ require 'open-uri'
 require 'nokogiri'
 
 def import_file(url = "https://www.marinetraffic.com/en/ais/details/ships/shipid:4199684/mmsi:244670249/vessel:STORMALONG")
+  open(url) do |f|
+    return unless f.status == ["200", "OK"]
+  end
+
   Nokogiri::HTML(open(url))
 end
 
@@ -21,12 +25,18 @@ def split_lat_lng
   remove_unwanted_chars.split('/')
 end
 
-def find_lat_lng
-  split_lat_lng.map { |item| item.to_f }
+def find_lat_lng(argument = split_lat_lng)
+  lat_lng = argument.map { |item| item.to_f }
+  if lat_lng == [0.0, 0.0] # we are ~probably~ converting something wrong to float
+    @error = "Lat and Lng are not numbers, something went wrong!"
+    return @error
+  else
+    lat_lng
+  end
 end
 
-puts find_lat_lng
-
-# expect(response).to be_success # ??
-# expect(rendered).to have_content 'Stormalong' # ??
-# expect(actual).to be_within(delta).of(expected)
+begin
+  puts find_lat_lng
+rescue => e # rescue StandardError by default
+  puts e # print error as it is
+end

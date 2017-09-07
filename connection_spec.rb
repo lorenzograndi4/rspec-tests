@@ -1,3 +1,4 @@
+require_relative 'code'
 require 'rspec'
 require 'webmock/rspec'
 require 'rest-client'
@@ -18,7 +19,7 @@ RSpec.describe "Test the connection" do
 
     it 'returns 200 if ok' do
       stub_request(:get, url).to_return(status: 200, body: 'The request was successful')
-      expect(RestClient.get(url).code).to eq(200) # have_http_status(200)
+      expect(RestClient.get(url).code).to eq(200)
     end
 
     it 'checks your actual connection is working' do
