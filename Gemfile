@@ -7,9 +7,10 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'open-uri'
+gem 'nokogiri'
+
 group :development, :test do
   gem 'rspec'
   gem 'webmock/rspec'
-  gem 'open-uri'
-  gem 'nokogiri'
 end
