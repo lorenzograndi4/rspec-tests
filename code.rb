@@ -27,12 +27,16 @@ end
 
 def find_lat_lng(argument = split_lat_lng)
   lat_lng = argument.map { |item| item.to_f }
-  if lat_lng == [0.0, 0.0] # we are ~probably~ converting something wrong to float
-    @error = "Lat and Lng are not numbers, something went wrong!"
-    return @error
-  else
-    lat_lng
-  end
+  case lat_lng
+    when [0.0, 0.0] # we are ~probably~ converting something wrong to float
+      @error = "Lat and Lng are not numbers, something went wrong!"
+      return @error
+    when !Array
+      @error = "This is not an array ;("
+      return @error
+    else
+      lat_lng
+    end
 end
 
 begin
