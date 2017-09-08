@@ -1,5 +1,7 @@
 ::learnings::
 
+. Run tests adding --format documentation
+
 . There are many ways to rescue errors in your code. Not all of them make sense.
 
 . Importing data from an external source makes the initial method NOT a pure function.
