@@ -1,45 +1,47 @@
 require_relative 'code'
 require 'rspec'
-
-def random_lat
-  rand(0..90).to_f
-end
-
-def random_lng
-  rand(0..180).to_f
-end
+require 'webmock/rspec'
+require 'open-uri'
 
 RSpec.describe "When importing lat and lng" do
 
-  it "checks the page is not empty" do
-    expect(import_file).not_to be(nil), "The file is empty"
+  url = 'https://www.marinetraffic.com/en/ais/details/ships/shipid:4199684/mmsi:244670249/vessel:STORMALONG'
+
+  it 'checks your actual connection is working' do
+    WebMock.allow_net_connect!
+    response = open('http://google.com')
+    expect(response.status).to eq(["200", "OK"])
   end
 
-  it "checks the page is an HTML doc" do
-    expect(import_file.class).to eq(Nokogiri::HTML::Document)
+  it 'returns error if timeout' do
+    check_timeout = WebMock.stub_request(:get, url).to_timeout
+    expect{ find_string(check_timeout) }.to raise_error(StandardError)
   end
 
-  it "checks the page contains the lat_lng string" do
-    expect(import_file.to_s).to include('Latitude / Longitude')
+  it 'returns error if 500' do
+    check_500 = WebMock.stub_request(:get, url).to_return(status: 500)
+    expect{ find_string(check_500) }.to raise_error(StandardError)
   end
 
-  it "checks you find the correct css on page" do
-    expect(import_file.css('.details_data_link')).not_to be nil
-    expect(import_file.css('.details_data_link').to_s).to include('°')
+  it 'returns error if 404' do
+    check_404 = WebMock.stub_request(:get, url).to_return(status: 404)
+    expect{ find_string(check_404) }.to raise_error(StandardError)
   end
 
-  it "checks you select a string from the page" do
-    expect(select_inner_string).to be_an_instance_of(String)
+  it "returns NoMethodError error if no HTML is found" do
+    expect{ find_string('Not HTML') }.to raise_error(NoMethodError)
   end
 
-  it "checks you get only 2 values" do
-    expect(find_lat_lng.length).to eq(2)
+  it "returns only one value if we split using wrong divider" do
+    array = find_array('1.1° / 9.9°', '&')
+    expect(array.length).to eq(1)
   end
 
-  it "returns lat and lng from page" do
-    lat, lng = find_lat_lng
-    expect(lat).to be_between(-90, 90)
-    expect(lng).to be_between(-180, 180)
+  # this is connected to the previous one
+  it "returns error if you get only one value" do
+    find_position = find_lat_lng(['33'])
+    puts find_position
+    expect(find_position).to eq(@error)
   end
 
   it "returns error if lat / lng are not numbers" do
@@ -48,22 +50,34 @@ RSpec.describe "When importing lat and lng" do
     expect(find_position).to eq(@error)
   end
 
-  it "returns error if lat / lng are not numbers" do
-    find_position = find_lat_lng('foo')
-    puts find_position
-    expect{find_position}.to eq(@error)
-  end
-
+  # We assume the parsing logic is correct if we get values
+  # close to each other after a short time
   it "shouldn't be too far from the previous position" do
+    WebMock.allow_net_connect!
     prev_lat, prev_lng = find_lat_lng
-    sleep 10
+    sleep 10 # change this to whatever value makes sense
     current_lat, current_lng = find_lat_lng
-    expect(current_lat).to be_within(2).of(prev_lat)
-    expect(current_lng).to be_within(2).of(prev_lng)
+    expect(current_lat).to be_within(0.2).of(prev_lat)
+    expect(current_lng).to be_within(0.2).of(prev_lng)
   end
 
-  it "checks lat and lng for random values" do
-    expect(random_lat).to be_between(-90, 90)
-    expect(random_lng).to be_between(-180, 180)
+  it "returns error if lat is out of limits" do
+    lat_lng = find_lat_lng(['99.9', '22.2'])
+    puts lat_lng
+    expect(lat_lng).to eq(@error)
+  end
+
+  it "returns error if lng is out of limits" do
+    lat_lng = find_lat_lng(['11.1', '-199.9'])
+    puts lat_lng
+    expect(lat_lng).to eq(@error)
+  end
+
+  it "checks lat and lng exist in the world" do
+    WebMock.allow_net_connect!
+    # the example we wrote together
+    lat, lng = find_lat_lng
+    expect(lat).to be_between(-90, 90)
+    expect(lng).to be_between(-180, 180)
   end
 end
