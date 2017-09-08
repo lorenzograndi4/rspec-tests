@@ -3,10 +3,6 @@ require 'rspec'
 
 RSpec.describe "When importing lat and lng" do
 
-  it "checks the page is not empty" do
-    expect(import_file).not_to be(nil), "The file is empty"
-  end
-
   it "returns only one value if we split using wrong divider" do
     array = find_array('1.1° / 9.9°', '&')
     expect(array.length).to eq(1)
