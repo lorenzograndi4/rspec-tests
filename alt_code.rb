@@ -4,14 +4,7 @@ require 'nokogiri'
 def scrape_page (
   url = 'http://www.marinetraffic.com/en/ais/details/ships/shipid:4199684/mmsi:244670249/vessel:STORMALONG'
   )
-  open(url) do |f|
-    case f.status
-      when ["200", "OK"]
-        return open(url)
-      else
-        puts f.status # This is an error
-      end
-  end
+  open(url)
 end
 
 def find_string (
@@ -61,7 +54,9 @@ end
 
 begin
   result = find_lat_lng
-rescue StandardError => error_message
+rescue NoMethodError => error_message
+  puts 'Custom' + error_message
+rescue => error_message # StandardError
   puts "An error occurred:\n#{error_message}\nPlease enter Lat and Lng manually."
 else
   puts result

@@ -1,14 +1,14 @@
 ::todos::
-....write gemfile file
-....RSpec examples which are clearly named
-....write down learnings
-.how to fail loudly? -> scrivi mock che ritorna pagina senza lat e lng e la funzione restituisce errore
-.se non c'e' html che succede? se non c'e' il css? se non trova lat e lng?
-.mock ritorna cose sbagliate -> modifica la funzione per considerare
-.testa se lng > 180, o se hai solo un valore
+//....write gemfile file
+//....RSpec examples which are clearly named
+//....write down learnings
+//.how to fail loudly? -> scrivi mock che ritorna pagina senza lat e lng e la funzione restituisce errore
+//.se non c'e' html che succede? se non c'e' il css? se non trova lat e lng?
+//.mock ritorna cose sbagliate -> modifica la funzione per considerare
+//.testa se lng > 180, o se hai solo un valore
 
 What are the things that are likely to go wrong? Simulate those situations in a few tests.
-  1. you _do_ have an internet connection
+  ??? 1. you _do_ have an internet connection
   2. the website _does_ return you a page and a good status code (what happens if 500?)
   3. the response _does_ have the HTML structure which permits you to apply your CSS selector
   4. the text in the elements you select _does_ contain the latitude and longitude values
