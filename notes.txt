@@ -37,6 +37,8 @@ it becomes clear to _that particular person_ why the code failed.
 . You can pass either a block or an argument to your expectation
 and they will behave very differently!
 
+. Calling split will always return an array, so not interesting to test.
+
 . Net::HTTP and RestClient seem to return different things, both different from regular HTTP requests
 
 . Catching errors, bad requests and timeouts is frustrating
