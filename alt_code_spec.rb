@@ -1,36 +1,28 @@
 require_relative 'alt_code'
 require 'rspec'
 require 'webmock/rspec'
-require 'open-uri'
 # require 'rest-client'
 
 RSpec.describe "When importing lat and lng" do
 
   url = 'https://www.marinetraffic.com/en/ais/details/ships/shipid:4199684/mmsi:244670249/vessel:STORMALONG'
 
-  # it "returns custom error message when an error occurs" do
-  #   check_timeout = WebMock.stub_request(:get, url).to_timeout
-  #   puts check_timeout
-  #   expect(find_string(check_timeout)).to include('manually')
-  # end
-
   it 'returns error if timeout' do
     check_timeout = WebMock.stub_request(:get, url).to_timeout
-    puts check_timeout
     expect{ find_string(check_timeout) }.to raise_error(StandardError)
   end
 
   it 'returns error if 500' do
-    check_500 = WebMock.stub_request(:get, url).to_return(status: 500, body: 'Something')
+    check_500 = WebMock.stub_request(:get, url).to_return(status: 500)
     expect{ find_string(check_500) }.to raise_error(StandardError)
   end
 
   it 'returns error if 404' do
-    check_404 = WebMock.stub_request(:get, url).to_return(status: 404, body: 'Something')
+    check_404 = WebMock.stub_request(:get, url).to_return(status: 404)
     expect{ find_string(check_404) }.to raise_error(StandardError)
   end
 
-  it "returns error if no HTML is found" do
+  it "returns NoMethodError error if no HTML is found" do
     expect{ find_string('Not HTML') }.to raise_error(NoMethodError)
   end
 
@@ -52,6 +44,8 @@ RSpec.describe "When importing lat and lng" do
     expect(find_position).to eq(@error)
   end
 
+  # We assume the parsing logic is correct if we get values
+  # close to each other after a short time
   it "shouldn't be too far from the previous position" do
     WebMock.allow_net_connect!
     prev_lat, prev_lng = find_lat_lng

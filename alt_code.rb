@@ -54,9 +54,8 @@ end
 
 begin
   result = find_lat_lng
-rescue NoMethodError => error_message
-  puts 'Custom' + error_message
-rescue => error_message # StandardError
+# This is where I catch all the StandardErrors and print them for whoever runs the code
+rescue => error_message
   puts "An error occurred:\n#{error_message}\nPlease enter Lat and Lng manually."
 else
   puts result
