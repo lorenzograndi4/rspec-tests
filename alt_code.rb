@@ -19,6 +19,7 @@ def find_string (
   css_selector = '.details_data_link'
   )
   # no need to break this one into smaller methods
+  # bc we test the interface, not the implementation
   Nokogiri::HTML(opened_url).css(css_selector)[0].children.text
 end
 
@@ -34,7 +35,7 @@ def find_lat_lng (
   clean_string_array = find_array
   )
 
-  lat_lng_float = clean_string_array.map(&:to_f)
+  lat_lng_float = clean_string_array.map(&:to_f) # shorter way to write it
 
   case
     # in this case we are ~almost certainly~ converting something wrong to float
@@ -44,6 +45,14 @@ def find_lat_lng (
     # in this case we only received one value (wrong divider?)
     when lat_lng_float.length < 2
       @error = "An error occurred:\nWe got only one value instead of two.\nPlease enter Lat and Lng manually."
+      return @error
+    # in this case lat is out of the world's limits
+    when lat_lng_float[0] > 90 || lat_lng_float[0] < -90
+      @error = "An error occurred:\nThe Lat value is not correct.\nPlease enter Lat and Lng manually."
+      return @error
+    # in this case lng is out of the world's limits
+    when lat_lng_float[1] > 180 || lat_lng_float[1] < -180
+      @error = "An error occurred:\nThe Lng value is not correct.\nPlease enter Lat and Lng manually."
       return @error
     else
       lat_lng_float
