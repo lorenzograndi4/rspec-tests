@@ -30,6 +30,8 @@ def find_lat_lng (
 
   lat_lng_float = clean_string_array.map(&:to_f) # shorter way to write it
 
+  # These cases are not rescued, bc they are not proper Ruby errors. We just print
+  # a custom message instead of wrong lat/lng numbers.
   # Ideally we should define and raise custom errors in these cases instead of
   # simply printing strings. An idea for the next refactoring :)
   case
