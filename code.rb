@@ -30,6 +30,8 @@ def find_lat_lng (
 
   lat_lng_float = clean_string_array.map(&:to_f) # shorter way to write it
 
+  # Ideally we should define and raise custom errors in these cases instead of
+  # simply printing strings. An idea for the next refactoring :)
   case
     # in this case we are ~almost certainly~ converting something wrong to float
     when lat_lng_float == [0.0, 0.0]

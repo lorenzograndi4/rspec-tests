@@ -32,6 +32,8 @@ RSpec.describe "When importing lat and lng" do
     expect{ find_string('Not HTML') }.to raise_error(NoMethodError)
   end
 
+  # Could find_array be considered a private method? If so,
+  # we shouldn't be testing it (according to Sandi Metz)
   it "returns only one value if we split using wrong divider" do
     array = find_array('1.1° / 9.9°', '&')
     expect(array.length).to eq(1)
