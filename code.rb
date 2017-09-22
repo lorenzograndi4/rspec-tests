@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'nokogiri'
+require_relative 'exceptions'
 
 def scrape_page (
   url = 'http://www.marinetraffic.com/en/ais/details/ships/shipid:4199684/mmsi:244670249/vessel:STORMALONG'
@@ -11,6 +12,11 @@ def find_string (
   opened_url = scrape_page,
   css_selector = '.details_data_link'
   )
+
+  if opened_url.nil?
+    raise RetryException.new(true), "Transient read error"
+  end
+
   # no need to break this one into smaller methods
   # bc we test the interface, not the implementation
   Nokogiri::HTML(opened_url).css(css_selector)[0].children.text
@@ -58,7 +64,11 @@ end
 
 begin
   result = find_lat_lng
-# This is where I catch all the StandardErrors and print them for whoever runs the code
+  # Raise custom error if no data is retrieved
+rescue RetryException => error_message
+  retry if error_message.ok_to_retry
+  raise
+  # This is where I catch all the StandardErrors and print them for whoever runs the code
 rescue => error_message
   puts "An error occurred:\n#{error_message}\nPlease enter Lat and Lng manually."
 else
